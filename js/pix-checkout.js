@@ -117,26 +117,21 @@ async function iniciarPixUI() {
     let style = `
     <style>
     #pix-fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999999; display: flex; align-items: flex-end; justify-content: center; font-family: 'Inter', Arial, sans-serif; backdrop-filter: blur(2px); }
-    .pix-bottom-sheet { width: 100%; max-width: 600px; background: #f9fafb; border-radius: 24px 24px 0 0; max-height: 92vh; overflow-y: auto; animation: slideUp 0.3s ease-out; box-shadow: 0 -4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+    .pix-bottom-sheet { width: 100%; max-width: 600px; background: white; border-radius: 24px 24px 0 0; max-height: 95vh; overflow-y: auto; animation: slideUp 0.3s ease-out; box-shadow: 0 -4px 10px rgba(0,0,0,0.1); position: relative; padding-bottom: 24px; }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .pix-drag-handle { width: 40px; height: 5px; background: #d1d5db; border-radius: 3px; margin: 12px auto 0 auto; }
-    .pix-header { padding: 15px 20px 15px 20px; text-align: center; font-weight: bold; font-size: 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; background: white; border-radius: 24px 24px 0 0; position: sticky; top: 0; z-index: 10; }
-    .pix-close { background: none; border: none; font-size: 28px; cursor: pointer; color: #6b7280; padding: 0; line-height: 1; }
-    .pix-container { padding: 15px; padding-bottom: 40px; flex: 1; }
-    .pix-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #f3f4f6; margin-bottom: 15px; }
-    .cpf-input-box { border: 1px solid #d1d5db; border-radius: 8px; padding: 15px; width: 100%; font-size: 18px; margin-bottom: 15px; box-sizing: border-box; text-align: center; font-weight: bold; outline: none; transition: border-color 0.2s; }
+    .pix-drag-handle { width: 40px; height: 5px; background: #e5e7eb; border-radius: 3px; margin: 12px auto 20px auto; }
+    .pix-close { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 28px; cursor: pointer; color: #9ca3af; padding: 5px; line-height: 1; }
+    .pix-container { padding: 0 24px; }
+    .cpf-title { font-size: 18px; font-weight: bold; color: #111827; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+    .cpf-title i { color: #f59e0b; }
+    .cpf-subtitle { font-size: 13px; color: #6b7280; margin-bottom: 20px; line-height: 1.4; }
+    .pix-alert-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
+    .cpf-input-box { border: 1px solid #d1d5db; border-radius: 8px; padding: 16px; width: 100%; font-size: 16px; margin-bottom: 20px; box-sizing: border-box; outline: none; transition: border-color 0.2s; color: #111827; }
     .cpf-input-box:focus { border-color: #16a34a; }
-    .pix-btn { background: #16a34a; color: white; border: none; border-radius: 8px; padding: 15px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; }
+    .cpf-input-box::placeholder { color: #9ca3af; }
+    .pix-btn { background: #16a34a; color: white; border: none; border-radius: 8px; padding: 16px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; }
     .pix-btn:hover { background: #15803d; }
-    .pix-btn:disabled { background: #9ca3af; cursor: not-allowed; }
-    .pix-warning { background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-start; }
-    .pix-qr-container { text-align: center; margin-bottom: 20px; }
-    .pix-qr-container img { width: 220px; height: 220px; border-radius: 8px; }
-    .pix-copy-box { background: #f3f4f6; border: 1px dashed #d1d5db; padding: 12px; border-radius: 8px; font-size: 11px; word-break: break-all; margin-bottom: 15px; color: #6b7280; text-align: center; user-select: all; cursor: pointer; }
-    .step-circle { width: 24px; height: 24px; background: #16a34a; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0; }
-    .step-row { display: flex; gap: 12px; margin-bottom: 15px; align-items: flex-start; }
-    .step-text { font-size: 13px; color: #374151; }
-    .step-text strong { display: block; color: #111827; margin-bottom: 2px; font-size: 14px; }
+    .pix-btn:disabled { background: #9ca3af; cursor: not-allowed; opacity: 0.7; }
     </style>
     `;
 
@@ -144,107 +139,91 @@ async function iniciarPixUI() {
     <div id="pix-fullscreen-overlay" onclick="if(event.target === this) fecharPixUI()">
         ${style}
         <div class="pix-bottom-sheet">
-            <div class="pix-header">
-                <span style="width: 24px;"></span>
-                <span id="pix-header-title">Pagamento</span>
-                <button class="pix-close" onclick="fecharPixUI()">×</button>
-            </div>
+            <button class="pix-close" onclick="fecharPixUI()">×</button>
+            <div class="pix-drag-handle"></div>
             
             <div class="pix-container" id="pix-step-cpf">
-                <div class="pix-card">
-                    <div style="display: flex; align-items: center; gap: 10px; color: #16a34a; font-weight: bold; font-size: 18px; margin-bottom: 15px;">
-                        <i class="fa-regular fa-address-card"></i> Informe seu CPF
-                    </div>
-                    <p style="font-size: 14px; color: #6b7280; margin-bottom: 15px;">
-                        Necessário para processar o pagamento via PIX e emitir nota fiscal.
-                    </p>
-                    <div class="pix-warning" style="background: #ecfdf5; border-color: #a7f3d0; color: #065f46;">
-                        <i class="fa-solid fa-shield-halved"></i> 
-                        <div>Seus dados são protegidos e criptografados e serão utilizados somente para finalizar seu pedido.</div>
-                    </div>
-                    <input type="tel" id="pix-cpf-input" class="cpf-input-box" placeholder="000.000.000-00" autocomplete="off">
-                    <button class="pix-btn" id="pix-btn-gerar" onclick="gerarPixAPI()">
-                        <i class="fa-solid fa-lock"></i> Salvar e pagar
-                    </button>
+                <div class="cpf-title">
+                    <i class="fa-solid fa-address-card"></i> Informe seu CPF
                 </div>
+                <div class="cpf-subtitle">
+                    Necessário para processar o pagamento via PIX e emitir nota fiscal.
+                </div>
+                <div class="pix-alert-green">
+                    <i class="fa-solid fa-shield-halved" style="margin-top: 2px;"></i> 
+                    <div>Seus dados são protegidos e criptografados e serão utilizados somente para finalizar seu pedido.</div>
+                </div>
+                <input type="tel" id="pix-cpf-input" class="cpf-input-box" placeholder="000.000.000-00" autocomplete="off">
+                <button class="pix-btn" id="pix-btn-gerar" onclick="gerarPixAPI()">
+                    <i class="fa-solid fa-lock"></i> Salvar e pagar
+                </button>
             </div>
 
             <div class="pix-container" id="pix-step-code" style="display: none;">
-                <div class="pix-card">
-                    <div style="display:flex; align-items:center; gap:10px; color:#16a34a; font-weight:bold; margin-bottom: 15px; font-size: 16px;">
-                        <i class="fa-solid fa-circle-check"></i> Pedido reservado
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: #dcfce7; border-radius: 50%; color: #16a34a; font-size: 24px; margin-bottom: 10px;">
+                        <i class="fa-solid fa-check"></i>
                     </div>
-                    <div class="pix-warning">
-                        <i class="fa-solid fa-triangle-exclamation" style="margin-top:2px;"></i>
-                        <div>Alguns bancos exibem alertas de segurança automáticos em compras online. Isso é completamente normal e não afeta seu pedido.</div>
-                    </div>
-                    <p style="text-align:center; font-size:13px; color:#4b5563; margin-bottom:15px;">
-                        O recebedor é nossa instituição de pagamentos parceira. Seu pedido está seguro e garantido. ✅
-                    </p>
-                    
-                    <div class="pix-qr-container">
-                        <img id="pix-qr-image" src="" alt="QR Code PIX">
-                    </div>
-                    
-                    <div class="pix-copy-box" id="pix-qr-text" onclick="copiarPixNovo()"></div>
-                    
-                    <button class="pix-btn" onclick="copiarPixNovo()">
-                        <i class="fa-regular fa-copy"></i> Copiar código PIX
-                    </button>
-                    
-                    <p style="text-align:center; font-size:12px; color:#6b7280; margin-top:15px;">
-                        Confira o nome do recebedor, ele deve ser:<br>
-                        <strong style="color:#111827; display:block; margin-top:5px; font-size:13px;">COMPRA GARANTIDA BR LTDA - OWEM PAY</strong>
-                    </p>
-                    
-                    <div style="display:flex; justify-content:center; gap:25px; margin-top:20px; font-size:13px; color:#16a34a; font-weight:bold; border-top: 1px solid #f3f4f6; padding-top: 15px;">
-                        <span><i class="fa-solid fa-shield"></i> Pagamento protegido</span>
-                        <span><i class="fa-solid fa-lock"></i> Ambiente seguro</span>
-                    </div>
+                    <h2 style="font-size: 20px; font-weight: bold; color: #111827; margin: 0;">Pedido reservado</h2>
+                    <p style="font-size: 14px; color: #6b7280; margin-top: 5px;">Seu pedido está seguro e garantido.</p>
+                </div>
+
+                <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #92400e; line-height: 1.4;">
+                    <i class="fa-solid fa-triangle-exclamation" style="margin-top:2px;"></i>
+                    <div>Alguns bancos exibem alertas de segurança automáticos em compras online. Isso é normal e não afeta o seu pedido.</div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img id="pix-qr-image" src="" alt="QR Code PIX" style="width: 200px; height: 200px; border-radius: 8px; border: 1px solid #e5e7eb; padding: 5px;">
                 </div>
                 
-                <div class="pix-card" style="display:flex; align-items:center; gap:15px; background: #fffbeb; border: 1px solid #fde68a;">
-                    <i class="fa-solid fa-hourglass-half" style="font-size:24px; color:#f59e0b;"></i>
-                    <div>
-                        <strong style="display:block; color:#111827;">Aguardando pagamento...</strong>
-                        <span style="font-size:13px; color:#6b7280;">Verificando automaticamente</span>
-                    </div>
-                </div>
+                <div style="background: #f3f4f6; border: 1px dashed #d1d5db; padding: 15px; border-radius: 8px; font-size: 13px; word-break: break-all; margin-bottom: 15px; color: #6b7280; text-align: center; cursor: pointer; user-select: all;" id="pix-qr-text" onclick="copiarPixNovo()"></div>
                 
-                <div class="pix-card" style="display:flex; align-items:center; justify-content:space-between;">
-                    <div>
-                        <strong style="display:block; color:#111827; margin-bottom:4px;">Dúvidas sobre seu pedido?</strong>
-                        <span style="font-size:13px; color:#6b7280;">Fale com a gente pelo WhatsApp</span>
-                    </div>
-                    <button onclick="chamarZap()" style="background:#25d366; color:white; border:none; border-radius:20px; padding:8px 16px; font-weight:bold; cursor:pointer;">
-                        <i class="fa-brands fa-whatsapp"></i> Chamar
-                    </button>
-                </div>
+                <button class="pix-btn" onclick="copiarPixNovo()" style="margin-bottom: 20px;">
+                    <i class="fa-regular fa-copy"></i> Copiar código PIX
+                </button>
                 
-                <div class="pix-card">
-                    <h3 style="font-size:16px; margin-bottom:20px; color:#111827;">Como realizar o pagamento</h3>
-                    
-                    <div class="step-row">
-                        <div class="step-circle">1</div>
-                        <div class="step-text">
-                            <strong>Copie o código PIX acima</strong>
-                            Clique no código ou no botão "Copiar código PIX"
+                <div style="background: #f9fafb; border-radius: 8px; padding: 15px; margin-bottom: 24px; border: 1px solid #f3f4f6;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb;">
+                        <i class="fa-solid fa-hourglass-half" style="font-size: 24px; color: #f59e0b;"></i>
+                        <div>
+                            <strong style="display: block; color: #111827; font-size: 15px;">Aguardando pagamento...</strong>
+                            <span style="font-size: 13px; color: #6b7280;">Verificando automaticamente</span>
                         </div>
                     </div>
                     
-                    <div class="step-row">
-                        <div class="step-circle">2</div>
-                        <div class="step-text">
-                            <strong>Abra o app do seu banco</strong>
-                            Vá em PIX → Pix Copia e Cola e cole o código
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <strong style="display: block; color: #111827; font-size: 14px; margin-bottom: 2px;">Dúvidas?</strong>
+                            <span style="font-size: 13px; color: #6b7280;">Fale com a gente pelo WhatsApp</span>
+                        </div>
+                        <button onclick="chamarZap()" style="background: #25d366; color: white; border: none; border-radius: 20px; padding: 8px 16px; font-weight: bold; cursor: pointer; font-size: 13px;">
+                            <i class="fa-brands fa-whatsapp"></i> Chamar
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="font-size: 16px; font-weight: bold; color: #111827; margin-bottom: 15px;">Como pagar</h3>
+                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                        <div style="width: 24px; height: 24px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">1</div>
+                        <div style="font-size: 13px; color: #4b5563; line-height: 1.4;">
+                            <strong style="display: block; color: #111827; font-size: 14px; margin-bottom: 2px;">Copie o código</strong>
+                            Clique no botão verde "Copiar código PIX" acima.
                         </div>
                     </div>
-                    
-                    <div class="step-row">
-                        <div class="step-circle">3</div>
-                        <div class="step-text">
-                            <strong>Confirme para COMPRA GARANTIDA BR LTDA</strong>
-                            Verifique o valor e finalize. Seu pedido é aprovado na hora.
+                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                        <div style="width: 24px; height: 24px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">2</div>
+                        <div style="font-size: 13px; color: #4b5563; line-height: 1.4;">
+                            <strong style="display: block; color: #111827; font-size: 14px; margin-bottom: 2px;">Abra o app do seu banco</strong>
+                            Vá na área PIX e selecione a opção "Pix Copia e Cola".
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                        <div style="width: 24px; height: 24px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0;">3</div>
+                        <div style="font-size: 13px; color: #4b5563; line-height: 1.4;">
+                            <strong style="display: block; color: #111827; font-size: 14px; margin-bottom: 2px;">Confirme os dados</strong>
+                            Verifique se o recebedor é <b>COMPRA GARANTIDA BR LTDA</b> e confirme.
                         </div>
                     </div>
                 </div>
