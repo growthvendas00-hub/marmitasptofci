@@ -135,9 +135,9 @@ async function iniciarPixUI() {
     </style>
     `;
 
-    let html = \`
+    let html = `
     <div id="pix-fullscreen-overlay">
-        \${style}
+        ${style}
         <div class="pix-header">
             <span style="width: 24px;"></span>
             <span id="pix-header-title">Pagamento</span>
@@ -244,7 +244,7 @@ async function iniciarPixUI() {
             </div>
         </div>
     </div>
-    \`;
+    `;
 
     document.body.insertAdjacentHTML('beforeend', html);
     
