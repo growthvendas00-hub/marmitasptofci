@@ -66,7 +66,6 @@ async function gerarPixAPI() {
             document.getElementById('pix-qr-text').innerText = data.qr_code;
             
             document.getElementById('pix-step-cpf').style.display = 'none';
-            document.getElementById('pix-header-title').innerText = 'Pagamento via PIX';
             document.getElementById('pix-step-code').style.display = 'block';
         } else {
             Swal.fire("Erro", "Não foi possível gerar o PIX: " + (data.error || data.message || "Erro desconhecido"), "error");
