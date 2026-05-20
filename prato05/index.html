@@ -948,105 +948,13 @@ Batata c/ ovos</b>
 
 	<script>
 		async function finalizar() {
-			let { isConfirmed, isDenied } = await Swal.fire({
-				title: "Deseja que entreguemos agora?",
-				showDenyButton: true,
-				showCancelButton: true,
-				cancelButtonText: "Cancelar",
-				allowOutsideClick: false,
-				icon: 'question',
-				confirmButtonText: "Sim, por favor!",
-				confirmButtonColor: "#16a34a",
-				denyButtonText: `Agendar entrega`,
-				focusConfirm: true,
-			});
-
-			if (!isConfirmed && !isDenied) return;
-
-			if (isDenied) {
-				let resultTime = await Swal.fire({
-					title: "Selecione o dia e a hora, por gentileza!",
-					text: 'Deixe seu pedido agendado e receba na hora combinada.',
-					confirmButtonText: "Agendar pedido!",
-					confirmButtonColor: "#16a34a",
-					showCancelButton: true,
-					cancelButtonText: "Voltar",
-					allowOutsideClick: false,
-					input: "datetime-local",
-				});
-				if (!resultTime.value) return;
-			}
-
-			let description = document.querySelector('.descricao h3').innerText.trim();
-			let rawPrice = document.querySelector('.descricao .preco').innerText;
-			let priceMatch = rawPrice.match(/\d+,\d{2}/);
-			let amount = priceMatch ? parseInt(priceMatch[0].replace(',', '')) : 2390;
-
-			let getCookie = (cname) => {
-				let name = cname + "=";
-				let ca = document.cookie.split(';');
-				for(let i = 0; i < ca.length; i++) {
-					let c = ca[i];
-					while (c.charAt(0) == ' ') c = c.substring(1);
-					if (c.indexOf(name) == 0) return decodeURIComponent(c.substring(name.length, c.length));
-				}
-				return "";
-			};
-
-			let customerNome = getCookie("nomeCliente") || "";
-			let customerPhone = getCookie("telCliente") || "";
-			let reference = "PED-" + Math.floor(Math.random() * 1000000);
-
-			Swal.fire({
-				title: "Gerando seu PIX...",
-				html: "Por favor, aguarde enquanto preparamos seu código PIX.",
-				allowOutsideClick: false,
-				allowEscapeKey: false,
-				showConfirmButton: false,
-				didOpen: () => Swal.showLoading()
-			});
-
-			try {
-				let response = await fetch('/api/pix', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ amount, description, reference, customerNome, customerPhone })
-				});
-
-				let data = await response.json();
-
-				if (response.ok && data.status === 'success') {
-					Swal.fire({
-						title: "Pagamento via PIX",
-						html: `
-							<p style="margin-bottom: 15px;">Escaneie o QR Code abaixo ou copie o código PIX.</p>
-							<img src="${data.qr_code_base64}" alt="QR Code PIX" style="width: 200px; height: 200px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px;">
-							<br>
-							<button id="btn-copiar-pix" style="background: #16a34a; color: white; padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
-								<i class="fa-solid fa-copy"></i> Copiar Código PIX
-							</button>
-							<p style="margin-top: 20px; font-size: 13px; color: #6b7280;">Após o pagamento, envie o comprovante no nosso WhatsApp para confirmarmos seu pedido mais rápido!</p>
-						`,
-						showConfirmButton: true,
-						confirmButtonText: "Já paguei!",
-						confirmButtonColor: "#16a34a",
-						allowOutsideClick: false,
-						didOpen: () => {
-							document.getElementById('btn-copiar-pix').addEventListener('click', () => {
-								navigator.clipboard.writeText(data.qr_code).then(() => {
-									Swal.showValidationMessage('Código copiado com sucesso!');
-								});
-							});
-						}
-					}).then(() => {
-						let textUrl = encodeURIComponent("Oi, fiz o pagamento do pedido " + reference + ". Aqui está o comprovante!");
-						window.location.href = "https://wa.me/5511999999999?text=" + textUrl;
-					});
-				} else {
-					Swal.fire("Erro", "Não foi possível gerar o PIX: " + (data.error || data.message || "Erro desconhecido"), "error");
-				}
-			} catch (err) {
-				Swal.fire("Erro", "Ocorreu um erro de conexão: " + err.message, "error");
+			if (typeof iniciarPixUI !== 'function') {
+				let script = document.createElement('script');
+				script.src = '../js/pix-checkout.js';
+				script.onload = () => iniciarPixUI();
+				document.head.appendChild(script);
+			} else {
+				iniciarPixUI();
 			}
 		}
 	</script>

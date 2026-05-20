@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { amount, description, reference, customerNome, customerPhone } = req.body;
+    const { amount, description, reference, customerNome, customerPhone, customerDocument } = req.body;
 
     const apiKey = process.env.PARADISE_API_KEY;
     if (!apiKey) {
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         name: customerNome || "Cliente Fogão Brazuca",
         email: "cliente@fogaobrazuca.com",
         phone: customerPhone ? customerPhone.replace(/\D/g, '') : "11999999999",
-        document: "00000000000"
+        document: customerDocument ? customerDocument.replace(/\D/g, '') : "00000000000"
       },
       source: "api_externa"
     };
