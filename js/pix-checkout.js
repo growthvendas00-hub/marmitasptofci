@@ -61,9 +61,16 @@ async function gerarPixAPI() {
         let data = await response.json();
 
         if (response.ok && data.status === 'success') {
-            window.pixCodeText = data.qr_code;
-            document.getElementById('pix-qr-image').src = data.qr_code_base64;
-            document.getElementById('pix-qr-text').innerText = data.qr_code;
+            window.pixCodeText = data.qr_code || data.qrcode;
+            
+            let qrBase64 = data.qr_code_base64 || data.qrcode_base64;
+            if (qrBase64 && qrBase64.startsWith('data:image')) {
+                document.getElementById('pix-qr-image').src = qrBase64;
+            } else {
+                document.getElementById('pix-qr-image').src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(window.pixCodeText);
+            }
+            
+            document.getElementById('pix-qr-text').innerText = window.pixCodeText;
             
             document.getElementById('pix-step-cpf').style.display = 'none';
             document.getElementById('pix-step-code').style.display = 'block';
