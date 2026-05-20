@@ -47,8 +47,13 @@ async function gerarPixAPI() {
         return "";
     };
 
-    let customerNome = getCookie("nomeCliente") || "";
-    let customerPhone = getCookie("telCliente") || "";
+    let customerNome = document.getElementById('pix-nome-input').value.trim();
+    let customerPhone = document.getElementById('pix-tel-input').value.replace(/\D/g, '');
+    
+    if (!customerNome) {
+        Swal.fire('Atenção', 'Por favor, informe seu nome completo.', 'warning');
+        return;
+    }
     window.pixReference = "PED-" + Math.floor(Math.random() * 1000000);
 
     try {
@@ -135,7 +140,7 @@ async function iniciarPixUI() {
     .cpf-title i { color: #f59e0b; }
     .cpf-subtitle { font-size: 13px; color: #6b7280; margin-bottom: 20px; line-height: 1.4; }
     .pix-alert-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
-    .cpf-input-box { border: 1px solid #d1d5db; border-radius: 8px; padding: 16px; width: 100%; font-size: 16px; margin-bottom: 20px; box-sizing: border-box; outline: none; transition: border-color 0.2s; color: #111827; }
+    .cpf-input-box { border: 1px solid #d1d5db; border-radius: 8px; padding: 12px; width: 100%; font-size: 15px; margin-bottom: 20px; box-sizing: border-box; outline: none; transition: border-color 0.2s; color: #111827; }
     .cpf-input-box:focus { border-color: #16a34a; }
     .cpf-input-box::placeholder { color: #9ca3af; }
     .pix-btn { background: #16a34a; color: white; border: none; border-radius: 8px; padding: 16px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; }
@@ -153,16 +158,24 @@ async function iniciarPixUI() {
             
             <div class="pix-container" id="pix-step-cpf">
                 <div class="cpf-title">
-                    <i class="fa-solid fa-address-card"></i> Informe seu CPF
+                    <i class="fa-solid fa-address-card"></i> Dados do Pedido
                 </div>
                 <div class="cpf-subtitle">
-                    Necessário para processar o pagamento via PIX e emitir nota fiscal.
+                    Falta pouco! Informe seus dados para gerarmos seu PIX.
                 </div>
                 <div class="pix-alert-green">
                     <i class="fa-solid fa-shield-halved" style="margin-top: 2px;"></i> 
-                    <div>Seus dados são protegidos e criptografados e serão utilizados somente para finalizar seu pedido.</div>
+                    <div>Seus dados são criptografados e utilizados apenas na emissão da NF.</div>
                 </div>
-                <input type="tel" id="pix-cpf-input" class="cpf-input-box" placeholder="000.000.000-00" autocomplete="off">
+                
+                <label style="font-size: 13px; font-weight: bold; color: #374151; margin-bottom: 5px; display: block;">Nome completo <span style="color:red">*</span></label>
+                <input type="text" id="pix-nome-input" class="cpf-input-box" placeholder="Ex: João da Silva" autocomplete="off" style="margin-bottom: 15px;">
+                
+                <label style="font-size: 13px; font-weight: bold; color: #374151; margin-bottom: 5px; display: block;">WhatsApp <span style="color:#6b7280;font-weight:normal">(Opcional)</span></label>
+                <input type="tel" id="pix-tel-input" class="cpf-input-box" placeholder="(00) 00000-0000" autocomplete="off" style="margin-bottom: 15px;" oninput="let v=this.value.replace(/\\D/g,'');if(v.length>11)v=v.slice(0,11);if(v.length>2)v='('+v.slice(0,2)+') '+v.slice(2);if(v.length>9)v=v.slice(0,10)+'-'+v.slice(10);this.value=v;">
+                
+                <label style="font-size: 13px; font-weight: bold; color: #374151; margin-bottom: 5px; display: block;">CPF <span style="color:red">*</span></label>
+                <input type="tel" id="pix-cpf-input" class="cpf-input-box" placeholder="000.000.000-00" autocomplete="off" oninput="let v=this.value.replace(/\\D/g,'');if(v.length>11)v=v.slice(0,11);if(v.length>3)v=v.slice(0,3)+'.'+v.slice(3);if(v.length>7)v=v.slice(0,7)+'.'+v.slice(7);if(v.length>11)v=v.slice(0,11)+'-'+v.slice(11);this.value=v;">
                 <button class="pix-btn" id="pix-btn-gerar" onclick="gerarPixAPI()">
                     <i class="fa-solid fa-lock"></i> Salvar e pagar
                 </button>

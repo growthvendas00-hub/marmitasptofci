@@ -6627,14 +6627,12 @@
 		  const progressoHTML = `
 		    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
 		      <div style="display:flex;align-items:center;gap:6px;flex:1;">
-		        <div style="width:28px;height:28px;border-radius:50%;background:#16a34a;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">1</div>
+		        <div style="width:28px;height:28px;border-radius:50%;background:#16a34a;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">✓</div>
 		        <div style="flex:1;height:3px;background:#16a34a;"></div>
-		        <div style="width:28px;height:28px;border-radius:50%;background:#d1d5db;color:#6b7280;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">2</div>
 		      </div>
 		    </div>
 		    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:12px;">
-		      <span style="color:#16a34a;font-weight:bold;">📍 Endereço</span>
-		      <span style="color:#9ca3af;">👤 Identificação</span>
+		      <span style="color:#16a34a;font-weight:bold;">📍 Endereço de Entrega</span>
 		    </div>`;
 
 		  const formHTML = progressoHTML + `
@@ -6735,86 +6733,11 @@
 		    else if (result.value) {
 		      setCookie("localEstado", estado, 365);
 		      setCookie("localCidade", cidade, 365);
-		      await etapa4(estado, cidade, result.value);
-		    }
-		  });
-		  if (voltou) await etapa1();
-		}
-
-		async function etapa4(estado, cidade, enderecoObj) {
-		  const progressoHTML = `
-		    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-		      <div style="display:flex;align-items:center;gap:6px;flex:1;">
-		        <div style="width:28px;height:28px;border-radius:50%;background:#16a34a;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">✓</div>
-		        <div style="flex:1;height:3px;background:#16a34a;"></div>
-		        <div style="width:28px;height:28px;border-radius:50%;background:#16a34a;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">2</div>
-		      </div>
-		    </div>
-		    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:12px;">
-		      <span style="color:#9ca3af;">📍 Endereço</span>
-		      <span style="color:#16a34a;font-weight:bold;">👤 Identificação</span>
-		    </div>`;
-
-		  const formHTML = progressoHTML + `
-		    <p style="font-size:14px;color:#374151;margin-bottom:14px;">Informe seus dados para personalizarmos a entrega</p>
-		    <div style="text-align:left;">
-		      <div>
-		        <label style="font-size:13px;font-weight:600;">Nome completo <span style="color:red">*</span></label>
-		        <input id="swal-nome" type="text" placeholder="Seu nome completo" style="width:100%;padding:10px;border:2px solid #16a34a;border-radius:8px;margin-top:4px;box-sizing:border-box;font-size:14px;">
-		      </div>
-		      <div style="margin-top:12px;">
-		        <label style="font-size:13px;font-weight:600;">WhatsApp <span style="color:#6b7280;font-weight:400;">(Opcional)</span></label>
-		        <div style="display:flex;gap:6px;margin-top:4px;">
-		          <select id="swal-ddi" style="padding:10px;border:1px solid #ccc;border-radius:8px;font-size:13px;background:white;"><option value="BR +55" selected>🇧🇷 +55</option></select>
-		          <input id="swal-tel" type="tel" placeholder="(00) 00000-0000" style="flex:1;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box;">
-		        </div>
-		      </div>
-		      <div style="text-align:center;margin-top:14px;">
-		        <span id="btn-voltar4" style="cursor:pointer;color:#6b7280;font-size:13px;">← Voltar e corrigir endereço</span>
-		      </div>
-		      <div id="swal-erro4" style="color:red;font-size:13px;margin-top:8px;display:none;"></div>
-		    </div>`;
-
-		  let voltou = false;
-		  await Swal.fire({
-		    title: "Como podemos te identificar?",
-		    html: formHTML,
-		    confirmButtonText: "Ver cardápio de ofertas! 🍔",
-		    confirmButtonColor: "#16a34a",
-		    showCancelButton: false,
-		    allowOutsideClick: false,
-		    allowEscapeKey: false,
-		    didOpen: () => {
-		      document.getElementById("btn-voltar4").addEventListener("click", () => {
-		        voltou = true;
-		        Swal.close();
-		      });
-		      const telInput = document.getElementById("swal-tel");
-		      telInput.addEventListener("input", () => {
-		        let v = telInput.value.replace(/\D/g, "");
-		        if (v.length > 2 && v.length <= 7) v = "(" + v.slice(0,2) + ") " + v.slice(2);
-		        else if (v.length > 7) v = "(" + v.slice(0,2) + ") " + v.slice(2,7) + "-" + v.slice(7,11);
-		        telInput.value = v;
-		      });
-		    },
-		    preConfirm: () => {
-		      const nome = document.getElementById("swal-nome").value.trim();
-		      if (!nome) {
-		        document.getElementById("swal-erro4").textContent = "Por favor, informe seu nome.";
-		        document.getElementById("swal-erro4").style.display = "block";
-		        return false;
-		      }
-		      return { nome, tel: document.getElementById("swal-tel").value.trim() };
-		    }
-		  }).then(async (result) => {
-		    if (result.value) {
-		      setCookie("nomeCliente", result.value.nome, 365);
-		      setCookie("telCliente", result.value.tel || "", 365);
-		      setCookie("enderecoCompleto", JSON.stringify(enderecoObj), 365);
+		      setCookie("enderecoCompleto", JSON.stringify(result.value), 365);
 		      await atualizarLocalizacao();
 		    }
 		  });
-		  if (voltou) await etapa3(estado, cidade);
+		  if (voltou) await etapa1();
 		}
 
 		escolherLocalizacao();
