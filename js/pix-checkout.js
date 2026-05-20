@@ -67,6 +67,9 @@ async function gerarPixAPI() {
             
             document.getElementById('pix-step-cpf').style.display = 'none';
             document.getElementById('pix-step-code').style.display = 'block';
+            
+            let sheet = document.querySelector('.pix-bottom-sheet');
+            if(sheet) sheet.scrollTop = 0;
         } else {
             Swal.fire("Erro", "Não foi possível gerar o PIX: " + (data.error || data.message || "Erro desconhecido"), "error");
             btn.innerHTML = '<i class="fa-solid fa-lock"></i> Salvar e pagar';
@@ -183,22 +186,12 @@ async function iniciarPixUI() {
                 </button>
                 
                 <div style="background: #f9fafb; border-radius: 8px; padding: 15px; margin-bottom: 24px; border: 1px solid #f3f4f6;">
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px;">
                         <i class="fa-solid fa-hourglass-half" style="font-size: 24px; color: #f59e0b;"></i>
                         <div>
                             <strong style="display: block; color: #111827; font-size: 15px;">Aguardando pagamento...</strong>
                             <span style="font-size: 13px; color: #6b7280;">Verificando automaticamente</span>
                         </div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <div>
-                            <strong style="display: block; color: #111827; font-size: 14px; margin-bottom: 2px;">Dúvidas?</strong>
-                            <span style="font-size: 13px; color: #6b7280;">Fale com a gente pelo WhatsApp</span>
-                        </div>
-                        <button onclick="chamarZap()" style="background: #25d366; color: white; border: none; border-radius: 20px; padding: 8px 16px; font-weight: bold; cursor: pointer; font-size: 13px;">
-                            <i class="fa-brands fa-whatsapp"></i> Chamar
-                        </button>
                     </div>
                 </div>
                 
